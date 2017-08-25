@@ -4,8 +4,20 @@ import re
 
 # Load any old page on the website
 result = requests.get("https://www.smith.edu/libraries/givemea404")
-c = result.content
-soup = BeautifulSoup(c, "html5lib")
+content = result.text
+
+## Do some initial regex based scrubbing 
+# Change all relative links to absolute urls
+content = re.sub(r'href\=\"/libraries', 'href="https://www.smith.edu/libraries', content)
+
+# Change all protocol non-specific urls to https (let's be real)
+content = re.sub(r'href\=\"//', 'href="https://', content)
+
+soup = BeautifulSoup(content, "html5lib")
+
+# Change title
+title = soup.find('title')
+title.string = "Smith College Libraries"
 
 ## SUBTRACT ##
 # Delete Drupal generator meta tag and Google site verification meta tag
@@ -23,7 +35,7 @@ soup.select("#skipToContent > section")[0].decompose()
 # Delete ALL javascript (including Drupal agrigated js files)
 #for element in soup.find_all('script'):
 #    element.decompose()
-import pdb; pdb.set_trace()
+
 # Delete Drupal generated js includes to agrigated js files
 for element in soup.find_all("script", {'src':re.compile("https://www.smith.edu/libraries/sites/libraries/files/js/js_(.*?)\.js")}):
     element.decompose()
@@ -73,6 +85,19 @@ output = soup.prettify(formatter="html")
 with open("smith-libraries-template-full.html", "w") as f:
     f.write(output)
 
-# Now make one without the hours and subnav
+# Now make one without the subnav TODO
+soup.select('nav.dhtml-menu-container')[0].decompose()
 
-# Now make one without the hours and the whole nav
+# TODO Disable menu event handlers so that overlay doesn't show up
+#output = soup.prettify(formatter="html")
+#with open("smith-libraries-template-no-sub-nav.html", "w") as f:
+#    f.write(output)
+
+# Now make one without the whole nav
+soup.select('#header > div > nav')[0].decompose()
+soup.select('#dl-menu')[0].decompose()
+soup.select('.mobile-nav-icon')[0].decompose()
+
+output = soup.prettify(formatter="html")
+with open("smith-libraries-template-no-nav.html", "w") as f:
+    f.write(output)
