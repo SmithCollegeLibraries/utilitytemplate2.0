@@ -3,12 +3,12 @@ from bs4 import BeautifulSoup
 import re
 
 # Load any old page on the website
-result = requests.get("https://www.smith.edu/libraries/givemea404")
+result = requests.get("https://libraries.smith.edu/givemea404")
 content = result.text
 
 ## Do some initial regex based scrubbing 
 # Change all relative links to absolute urls
-content = re.sub(r'href\=\"/libraries', 'href="https://www.smith.edu/libraries', content)
+content = re.sub(r'href\=\"/libraries', 'href="https://libraries.smith.edu', content)
 
 # Change all protocol non-specific urls to https (let's be real)
 content = re.sub(r'href\=\"//', 'href="https://', content)
@@ -26,7 +26,7 @@ for element in soup.find_all("meta", {'name': metatagsToDelete}):
     element.decompose()
 
 # Delete Drupal generated css includes to agrigated css files
-for element in soup.find_all("link", {'href':re.compile("https://www.smith.edu/libraries/sites/libraries/files/css/css_(.*?)\.css")}):
+for element in soup.find_all("link", {'href':re.compile("https://libraries.smith.edu/sites/libraries/files/css/css_(.*?)\.css")}):
     element.decompose()
 
 # Delete main content
@@ -37,29 +37,29 @@ soup.select("#skipToContent > section")[0].decompose()
 #    element.decompose()
 
 # Delete Drupal generated js includes to agrigated js files
-for element in soup.find_all("script", {'src':re.compile("https://www.smith.edu/libraries/sites/libraries/files/js/js_(.*?)\.js")}):
+for element in soup.find_all("script", {'src':re.compile("https://libraries.smith.edu/sites/libraries/files/js/js_(.*?)\.js")}):
     element.decompose()
 
 ## ADD ##
 # Add Drupal system base and main style link to site css
 head = soup.find("head")
-cssSources = ["https://www.smith.edu/libraries/modules/system/system.base.css", "https://www.smith.edu/libraries/sites/libraries/themes/smith_library/css/main-styles.css"]
+cssSources = ["https://libraries.smith.edu/modules/system/system.base.css", "https://libraries.smith.edu/sites/libraries/themes/smith_library/css/main-styles.css"]
 for cssSource in cssSources:
     newTag = soup.new_tag("link", href=cssSource, rel="stylesheet", type="text/css")
     head.append(newTag)
 
 ## Add various js includes
-jsSources = ['https://www.smith.edu/libraries/sites/libraries/themes/smith_library/ui/scripts/vendor/jquery/jquery-1.9.1.min.js', 'https://use.fontawesome.com/e8941a2fd6.js', 'https://www.smith.edu/libraries/sites/libraries/themes/smith_library/ui/scripts/vendor/modernizr/modernizr.custom.js']
+jsSources = ['https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/jquery/jquery-1.9.1.min.js', 'https://use.fontawesome.com/e8941a2fd6.js', 'https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/modernizr/modernizr.custom.js']
 for jsSource in jsSources:
     newTag = soup.new_tag('script', src=jsSource)
     head.append(newTag)
 
 # Add require.js to bottom with data-main attribute
 body = soup.find("body")
-newTag = soup.new_tag('script', src="https://www.smith.edu/libraries/sites/libraries/themes/smith_library/ui/scripts/vendor/require/require.js")
-newTag['data-main'] = "https://www.smith.edu/libraries/sites/libraries/themes/smith_library/ui/scripts/main"
+newTag = soup.new_tag('script', src="https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/require/require.js")
+newTag['data-main'] = "https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/main"
 body.append(newTag)
-#body.append('<script data-main="https://www.smith.edu/libraries/sites/libraries/themes/smith_library/ui/scripts/main" src="https://www.smith.edu/libraries/sites/libraries/themes/smith_library/ui/scripts/vendor/require/require.js"></script>')
+#body.append('<script data-main="https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/main" src="https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/require/require.js"></script>')
 
 demoContent = """
   <div class="container">
