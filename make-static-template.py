@@ -7,11 +7,11 @@ result = requests.get("https://libraries.smith.edu/givemea404")
 content = result.text
 
 ## Do some initial regex based scrubbing 
-# Change all relative links to absolute urls
-content = re.sub(r'href\=\"/libraries', 'href="https://libraries.smith.edu', content)
-
 # Change all protocol non-specific urls to https (let's be real)
 content = re.sub(r'href\=\"//', 'href="https://', content)
+
+# Change all relative links to absolute urls
+content = re.sub(r'href\=\"/', 'href="https://libraries.smith.edu/', content)
 
 soup = BeautifulSoup(content, "html5lib")
 
