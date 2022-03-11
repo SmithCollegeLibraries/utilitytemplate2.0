@@ -36,7 +36,7 @@ soup.select("#skipToContent > section")[0].decompose()
 # for element in soup.find_all('script'):
 #     element.decompose()
 #
-# # Delete Drupal generated js includes to agrigated js files
+# # Delete Drupal generated js includes to aggregated js files
 # for element in soup.find_all("script", {'src':re.compile("https://libraries.smith.edu/sites/libraries/files/js/js_(.*?)\.js")}):
 #     element.decompose()
 #
