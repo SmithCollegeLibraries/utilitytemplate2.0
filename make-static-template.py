@@ -6,7 +6,7 @@ import re
 result = requests.get("https://libraries.smith.edu/givemea404")
 content = result.text
 
-## Do some initial regex based scrubbing 
+## Do some initial regex based scrubbing
 # Change all protocol non-specific urls to https (let's be real)
 content = re.sub(r'href\=\"//', 'href="https://', content)
 
@@ -32,27 +32,19 @@ for element in soup.find_all("link", {'href':re.compile("https://libraries.smith
 # Delete main content
 soup.select("#skipToContent > section")[0].decompose()
 
-# Delete ALL javascript (including Drupal agrigated js files)
-#for element in soup.find_all('script'):
-#    element.decompose()
-
-# Delete Drupal generated js includes to agrigated js files
-for element in soup.find_all("script", {'src':re.compile("https://libraries.smith.edu/sites/libraries/files/js/js_(.*?)\.js")}):
-    element.decompose()
-
-## ADD ##
-# Add Drupal system base and main style link to site css
-head = soup.find("head")
-cssSources = ["https://libraries.smith.edu/modules/system/system.base.css", "https://libraries.smith.edu/sites/libraries/themes/smith_library/css/main-styles.css"]
-for cssSource in cssSources:
-    newTag = soup.new_tag("link", href=cssSource, rel="stylesheet", type="text/css")
-    head.append(newTag)
-
-## Add various js includes
-jsSources = ['https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/jquery/jquery-1.9.1.min.js', 'https://use.fontawesome.com/e8941a2fd6.js', 'https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/modernizr/modernizr.custom.js']
-for jsSource in jsSources:
-    newTag = soup.new_tag('script', src=jsSource)
-    head.append(newTag)
+# # Delete ALL javascript (including Drupal agrigated js files)
+# for element in soup.find_all('script'):
+#     element.decompose()
+#
+# # Delete Drupal generated js includes to agrigated js files
+# for element in soup.find_all("script", {'src':re.compile("https://libraries.smith.edu/sites/libraries/files/js/js_(.*?)\.js")}):
+#     element.decompose()
+#
+# ## Add various js includes
+# jsSources = ['https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/jquery/jquery-1.9.1.min.js', 'https://use.fontawesome.com/e8941a2fd6.js', 'https://libraries.smith.edu/sites/libraries/themes/smith_library/ui/scripts/vendor/modernizr/modernizr.custom.js']
+# for jsSource in jsSources:
+#     newTag = soup.new_tag('script', src=jsSource)
+#     head.append(newTag)
 
 # Add require.js to bottom with data-main attribute
 body = soup.find("body")
@@ -66,13 +58,13 @@ demoContent = """
     <div class="row">
       <h1>Content Goes Here</h1>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       </p>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
       </p>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </p>
     </div>
   </div>
